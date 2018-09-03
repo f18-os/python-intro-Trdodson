@@ -10,8 +10,17 @@ if len(sys.argv) is not 3:
 
 inputName = sys.argv[1]
 outputName = sys.argv[2]
+count = 0
 
-#Create outpuutfile.
+#Opens file and counts the words! Modified from wordCountTest.py.
+with open(inputName, 'r') as myFile:
+    for line in myFile:
+        for w in line.split():
+            count += 1
+        
+
+#Print number of lines and create outputfile.
+print(count)
 f= open(outputName,"w+")
 
 f.close()
