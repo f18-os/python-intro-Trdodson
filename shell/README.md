@@ -1,4 +1,5 @@
-##Basic Shell
+# Basic Shell
+
 This directory contains a basic shell program. Currently, it is able to fork a
 clone child process and search directories for a specific program (wc).
 
