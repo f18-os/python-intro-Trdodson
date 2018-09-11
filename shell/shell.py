@@ -6,8 +6,11 @@ import os, sys, time, re
 
 pid = os.getpid()
 
-userCmd = input("Insert command to run on shell.py:")
+userCmd = input("Insert command>") # Prompt user for a command.
 type(userCmd)
+
+userArg = input("Insert argument>") # Prompt user for arguments.
+type(userArg)
     
 os.write(1, ("About to fork (pid:%d)\n" % pid).encode())
 
@@ -19,13 +22,13 @@ if rc < 0:
 
 elif rc == 0:
     os.write(1, ("I am child.  My pid==%d.  Parent's pid=%d\n" % (os.getpid(), pid)).encode())
-    args = [userCmd, "shell.py"]
+    args = [userCmd, userArg]                    # Arguments for program
 
     os.close(1)
-    sys.stdout = open("shell-output.txt", "w")
-    fd = sys.stdout.fileno()
+    sys.stdout = open("shell-output.txt", "w")   # Redirect output of program to text file.
+    fd = sys.stdout.fileno()                     # define file descriptor
     os.set_inheritable(fd,True)
-    os.write(2,("Child: opened %fd for writing\n" % fd).encode())
+    os.write(2,("Child: opened fd=%fd for writing\n" % fd).encode())
     
     for dir in re.split(":", os.environ['PATH']): # try each directory.
         program = "%s/%s" % (dir, args[0])        # path to program is here
