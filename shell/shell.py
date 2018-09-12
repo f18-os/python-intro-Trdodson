@@ -25,6 +25,7 @@ while(True): # Keep asking for prompts 'till user types "exit"
     elif rc == 0:
     
         os.write(1, ("I am child.  My pid==%d.  Parent's pid=%d\n" % (os.getpid(), pid)).encode())
+        
         os.close(1)
         sys.stdout = open("shell-output.txt", "w")   # Redirect output of program to text file.
         fd = sys.stdout.fileno()                     # define file descriptor
@@ -32,9 +33,9 @@ while(True): # Keep asking for prompts 'till user types "exit"
         os.write(2,("Child: opened fd=%fd for writing\n" % fd).encode())
 
         for dir in re.split(":", os.environ['PATH']):    # try each directory.
-            program = "%s/%s" % (dir, userCmd[0])        # path to program is here
+            program = "%s/%s" % (dir, args[0])        # path to program is here
             try:
-                os.execve(program, userCmd, os.environ)  # Try to run the program.
+                os.execve(program, args, os.environ)  # Try to run the program.
             except FileNotFoundError:
                 pass
             
@@ -43,5 +44,5 @@ while(True): # Keep asking for prompts 'till user types "exit"
         
     else:
         os.write(1, ("I am parent.  My pid=%d.  Child's pid=%d\n" % (pid, rc)).encode())
-        childPidCode = os.wait() #Wait for child to die
+        childPidCode = os.wait() # Wait for child to die
         os.write(1, ("Parent: Child %d terminated with exit code %d\n" % childPidCode).encode())
