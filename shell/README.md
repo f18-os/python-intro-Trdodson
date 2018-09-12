@@ -1,10 +1,41 @@
-# Basic Shell
+# Lab 2 - Basic Shell
 
 This directory contains a basic shell program. It takes commands from the
 user, forks a child process, and runs the program specified.
 
-It redirects the output of the program to a text file, shell-output.txt. The
-shell terminates if the user enters the string "exit" at the prompt.
+## How To Use
+This shell, when executed, will immeadiately prompt the user for a command.
+Enter any Bash command (that ISN'T 'built in' to Bash, such as cd) when
+prompted.
+
+A few to try:
+
+~~~
+wc shell.py
+~~~
+
+~~~
+ls
+~~~
+
+~~~
+which ls
+~~~
+
+~~~
+cat README.md
+~~~
+
+If you wish to redirect the output to a specific file, use the '>'
+character. For example, to write the output of wc shell.py to
+output.txt, simply enter the following when prompted:
+~~~
+wc shell.py > output.txt
+~~~
+It will create and write to the file if it does not already exist -
+otherwise, it will simply overwrite the existing file.
+
+To exit the shell, simply type "exit" into the prompt.
 
 ## Refrences
 
@@ -12,9 +43,8 @@ This assignment was prepared in a manner consistent with the instructor's
 requirements. All significant collaboration or guidance from external sources
 is clearly documented. These include:
 
-* p3-exec and p4-redirect; the shell seen here was built based on the
-  structure of these programs, including the directory search and
-  redirection of the output to a specific file.
+* p3-execv.py and p4-redirect.py; the shell seen here was built based on the
+  structure of these demo programs provided by the instructor. Namely, the
+  basic structure of the forked 'if-else' branches for parent and child processes.
   
-
-Further edits as warranted - more details soon.
+Further edits as warranted.
