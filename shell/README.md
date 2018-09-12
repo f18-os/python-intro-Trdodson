@@ -1,10 +1,20 @@
 # Basic Shell
 
-This directory contains a basic shell program. Currently, it is able to take
-one command with one argument from a user, fork a child process and run the
-program specified. It also redirects the output of the program to a text file,
-shell-output.txt. The shell terminates if the user enters the string "exit".
+This directory contains a basic shell program. It takes commands from the
+user, forks a child process, and runs the program specified.
 
-Code based on p3-exec and p4-redirect programs provided by the instructor.
+It redirects the output of the program to a text file, shell-output.txt. The
+shell terminates if the user enters the string "exit" at the prompt.
+
+## Refrences
+
+This assignment was prepared in a manner consistent with the instructor's
+requirements. All significant collaboration or guidance from external sources
+is clearly documented. These include:
+
+* p3-exec and p4-redirect; the shell seen here was built based on the
+  structure of these programs, including the directory search and
+  redirection of the output to a specific file.
+  
 
 Further edits as warranted - more details soon.
