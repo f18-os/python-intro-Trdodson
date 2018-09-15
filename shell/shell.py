@@ -32,13 +32,13 @@ def parent():
             os.write(2, ("fork failed, returning %d\n" % rc).encode())
             sys.exit(1)
         elif rc == 0:           # This is a child.
-         child(args, myPipe)
+         child(args)
         else:                               # If rc isn't 0, this is a parent.
             childPidCode = os.wait()        # Wait for the child to die.
             os.write(1,("Parent: child %d terminated with exit code %d\n" % childPidCode).encode())
 
         
-def child(args, myPipe):
+def child(args):
 
     pid = os.getpid()
     os.write(1, ("Child: my pid is %d\n" % pid).encode())
