@@ -14,27 +14,35 @@ def parent():
         pid = os.getpid()
         args = input("Command>")         # Prompt user for a command.
         type(args)
+        
         if(args.lower() == "exit"):      # If you see exit command, break the loop (kill the shell)
             break
+        elif (args == ""):
+            continue
+            
         args = args.split()              # Parse the command for arguments
 
-        if "|" in args:                  # Pipe detected: fork two children.
-            rc2 = os.fork()
-        
-        rc = os.fork()                   # Create a child process.
+       # if "|" in args:                  # Pipe detected: fork two children.
+       #     myPipe = os.pipe()
+       #     rc = os.fork()
+       rc = os.fork()                   # Create a child process.
 
         # Handling the fork. Heavily based on p3-execv.py and p4-redirect.py. See README.
-        if rc < 0 or rc2 < 0:
+        if rc < 0:
             os.write(2, ("fork failed, returning %d\n" % rc).encode())
             sys.exit(1)
-        elif rc == 0 or rc2 == 0:                       # This is a child.
-         child(args)
+        elif rc == 0:           # This is a child.
+         child(args, myPipe)
         else:                               # If rc isn't 0, this is a parent.
             childPidCode = os.wait()        # Wait for the child to die.
+            os.write(1,("Parent: child %d terminated with exit code %d\n" % childPidCode).encode())
 
         
-def child(args):
+def child(args, myPipe):
 
+    pid = os.getpid()
+    os.write(1, ("Child: my pid is %d\n" % pid).encode())
+    
     if '>' in args:      # Redirect detected. The user wants to redirect the output.
         os.close(1)                                             # Close standard output.
         sys.stdout = open(args[args.index('>') + 1], "w")       # Redirect output of program to specified text file.
@@ -50,8 +58,6 @@ def child(args):
         os.set_inheritable(fd,True)                             
         args.remove(args[args.index('<') + 1])                  
         args.remove('<')
-        print(args)
-
 
     if '>>' in args:      # The user wants to append a file.
         os.close(1)
@@ -67,7 +73,7 @@ def child(args):
             os.execve(program, args, os.environ)                # Try to run the program.
         except FileNotFoundError:
             pass
-    os.write(2, ("Child: Could not exec %s \n" % program).encode())
+    os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
     sys.exit(1)
     
 parent()            
