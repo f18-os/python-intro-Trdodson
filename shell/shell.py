@@ -11,12 +11,18 @@ import os, sys, time, re
         
 def parent():
     while(True):                         # Keep asking for prompts 'till user types "exit"
+
         pid = os.getpid()
-        args = input("Command>")         # Prompt user for a command.
+
+        try:
+            args = input("Command>")     # Prompt user for a command.
+        except EOFError:
+            sys.exit(1)
+        
         type(args)
         
         if(args.lower() == "exit"):      # If you see exit command, break the loop (kill the shell)
-            break
+            sys.exit(1)
         elif (args == ""):
             continue
         
@@ -29,12 +35,13 @@ def parent():
                 os.write(2,("Error: %s does not exist!\n" % args[1]).encode())
                 pass
             continue
-            
-        # if "|" in args:                  # Pipe detected: fork two children.
-            # myPipe = os.pipe()
-            # rc = os.fork()
 
-        rc = os.fork()                   # Create a child process.
+        # if "|" in args:                 # Pipe detected. Fork twice? [NON-FUNCTIONAL]
+           # myPipe = os.pipe()
+           # rc = os.fork()
+    
+
+        rc = os.fork()                    # Create a child process.
 
         # Handling the fork. Heavily based on p3-execv.py and p4-redirect.py. See README.
         if rc < 0:
@@ -42,14 +49,11 @@ def parent():
             sys.exit(1)
         elif rc == 0:           # This is a child.
          child(args)
-        else:                   # If rc isn't 0, this is a parent.
-
+        else:                   # If rc isn't 0, this is a parent.           
             if '&' in args:     # If & in args, don't wait.
                 continue
             else:
                 childPidCode = os.wait()        # Wait for the child to die.
-                # os.write(1,("Parent: child %d terminated with exit code %d\n" % childPidCode).encode())
-
         
 def child(args):
 
@@ -93,4 +97,4 @@ def child(args):
     os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
     sys.exit(1)
     
-parent()            
+parent() #Start the shell.           
