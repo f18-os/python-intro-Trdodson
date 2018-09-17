@@ -19,13 +19,22 @@ def parent():
             break
         elif (args == ""):
             continue
-            
+        
         args = args.split()              # Parse the command for arguments
 
-       # if "|" in args:                  # Pipe detected: fork two children.
-       #     myPipe = os.pipe()
-       #     rc = os.fork()
-       rc = os.fork()                   # Create a child process.
+        if 'cd' in args:                 # If cd command is used, change working directory.
+            try:
+                os.chdir(args[1])
+            except FileNotFoundError:
+                os.write(2,("Error: %s does not exist!\n" % args[1]).encode())
+                pass
+            continue
+            
+        # if "|" in args:                  # Pipe detected: fork two children.
+            # myPipe = os.pipe()
+            # rc = os.fork()
+
+        rc = os.fork()                   # Create a child process.
 
         # Handling the fork. Heavily based on p3-execv.py and p4-redirect.py. See README.
         if rc < 0:
@@ -33,15 +42,19 @@ def parent():
             sys.exit(1)
         elif rc == 0:           # This is a child.
          child(args)
-        else:                               # If rc isn't 0, this is a parent.
-            childPidCode = os.wait()        # Wait for the child to die.
-            os.write(1,("Parent: child %d terminated with exit code %d\n" % childPidCode).encode())
+        else:                   # If rc isn't 0, this is a parent.
+
+            if '&' in args:     # If & in args, don't wait.
+                continue
+            else:
+                childPidCode = os.wait()        # Wait for the child to die.
+                # os.write(1,("Parent: child %d terminated with exit code %d\n" % childPidCode).encode())
 
         
 def child(args):
 
     pid = os.getpid()
-    os.write(1, ("Child: my pid is %d\n" % pid).encode())
+    # os.write(1, ("Child: my pid is %d\n" % pid).encode())
     
     if '>' in args:      # Redirect detected. The user wants to redirect the output.
         os.close(1)                                             # Close standard output.
@@ -66,6 +79,10 @@ def child(args):
         os.set_inheritable(fd,True)                             
         args.remove(args[args.index('>>') + 1])                 
         args.remove('>>')
+
+    if '&' in args:       # The user doesn't want the shell to wait until process dies. Just gets rid of '&'.               
+        args.remove('&') 
+    
         
     for dir in re.split(":", os.environ['PATH']):               # Try each directory.
         program = "%s/%s" % (dir, args[0])                      # Path to program is here
