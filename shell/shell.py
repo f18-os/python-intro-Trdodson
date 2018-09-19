@@ -1,11 +1,10 @@
 #! /usr/bin/env python3
 
-# Implementation of a basic shell. The program takes
-# prompts from the user and runs other specified programs.
-# This assignment was prepared in a manner consistent with
-# the instructor's requirements. All significant collaboration
-# or guidance from external sources is clearly documented. See
-# README.md for detailed instructions and refrences.
+# Implementation of a basic shell. The program takes prompts from the user and
+# runs other specified programs.  This assignment was prepared in a manner
+# consistent with the instructor's requirements. All significant collaboration
+# or guidance from external sources is clearly documented. See README.md for
+# detailed instructions and refrences.
 
 import os, sys, time, re
         
@@ -13,11 +12,18 @@ def parent():
     while(True):                         # Keep asking for prompts 'till user types "exit"
 
         pid = os.getpid()
+        prompt = os.environ["PS1"]
 
-        try:
-            args = input("Command>")     # Prompt user for a command.
-        except EOFError:
-            sys.exit(1)
+        if not prompt:                     # Check if PS1 is set.
+            try:
+                args = input("Command>")   # Prompt with a set string.
+            except EOFError:
+                sys.exit(1)
+        else:
+            try:
+                args = input(prompt)    # Prompt with the PS1 variable.
+            except EOFError:
+                sys.exit(1)
         
         type(args)
         
@@ -86,7 +92,6 @@ def child(args):
 
     if '&' in args:       # The user doesn't want the shell to wait until process dies. Just gets rid of '&'.               
         args.remove('&') 
-    
         
     for dir in re.split(":", os.environ['PATH']):               # Try each directory.
         program = "%s/%s" % (dir, args[0])                      # Path to program is here
