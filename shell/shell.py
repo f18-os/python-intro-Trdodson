@@ -89,15 +89,17 @@ def child(args):
         args.remove('&')
 
 
-    if '|' in args:
-        pr,pw = os.pipe()
+    if '|' in args:       # User is piping!
+
+        pr,pw = os.pipe() # Pipe: from p5-pipe.
+
         for f in (pr,pw):
             os.set_inheritable(f, True)
             os.write(2,("Pipe: pr=%d pw=%d\n" % (pr,pw)).encode())
-            rc = os.fork()
+            rc = os.fork() 
 
             if rc < 0:
-                os.write(1,("Child fork failed.\n").encode())
+                os.write(2,("Child fork failed.\n").encode())
             if rc == 0:
                 childPipe(args,pr,pw)
             if rc > 0:
@@ -106,9 +108,12 @@ def child(args):
                 os.dup(pr)
                 for fd in (pr,pw):
                     os.close(fd)
+                args.remove(args[args.index('|') - 1])
+                args.remove('|')
+                print(args)
                 for line in fileinput.input():
-                    print("From child-child:%s" % line)
-                sys.exit(1)    
+                    print("child-child: %s" % line)
+                    sys.exit(1)
         
     for dir in re.split(":", os.environ['PATH']):               # Try each directory.
         program = "%s/%s" % (dir, args[0])                      # Path to program is here
@@ -118,15 +123,14 @@ def child(args):
             pass
     os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
     sys.exit(1)
-                   
-def childPipe(args,pread,pwrite):
 
-    os.close(1)
+#Child pipe method.
+def childPipe(args,pread,pwrite): 
+    os.close(1)                   # Redirect the output of this method.
     os.dup(pwrite)
     for f in (pread, pwrite):
         os.close(f)
-    print("Hi!")
+    print("Hello! How are you?") 
     sys.exit(1)
-
         
 parent() #Start the shell.           
