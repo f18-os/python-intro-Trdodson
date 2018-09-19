@@ -4,6 +4,7 @@ This directory contains a basic shell program. It takes commands from the
 user, forks a child process, and runs the program specified.
 
 ## How To Use
+
 This shell, when executed, will immeadiately prompt the user for a command.
 Enter any Bash command when prompted.
 
@@ -28,13 +29,14 @@ cat README.md
 If you wish to redirect the output to a specific file, use the '>'
 character. For example, to write the output of wc shell.py to
 output.txt, simply enter the following when prompted:
+
 ~~~
 wc shell.py > output.txt
 ~~~
-It will create and write to the file if it does not already exist -
-otherwise, it will simply overwrite the existing file. It is also possible
-to redirect input using '<' and to append an existing output using
-'>>'.
+
+It will create and write to the file if it does not already exist - otherwise,
+it will simply overwrite the existing file. It is also possible to redirect
+input using '<' and to append an existing output using '>>'.
 
 To exit the shell, simply type "exit" into the prompt.
 
