@@ -44,7 +44,7 @@ def parent():
     
         rc = os.fork()                   # Create a child process.
 
-        # Handling the fork. Heavily based on p3-execv.py and p4-redirect.py. See README.
+        # Handling the fork. Refrence: p3-execv.py and p4-redirect.py. See COLLABORATIONS and README.
         if rc < 0:
             os.write(2, ("fork failed, returning %d\n" % rc).encode())
             sys.exit(1)
@@ -63,7 +63,7 @@ def child(args):
 
     pid = os.getpid()
     
-    if '>' in args:      # Redirect detected. The user wants to redirect the output. See p4-redirect.
+    if '>' in args:      # Redirect detected. The user wants to redirect the output. Refrence: p4-redirect.
         os.close(1)                                             # Close standard output.
         sys.stdout = open(args[args.index('>') + 1], "w")       # Redirect output of program to specified text file.
         fd = sys.stdout.fileno()                                # define file descriptor
@@ -123,8 +123,8 @@ def child(args):
                 pass
             os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
             sys.exit(1)
-        
-    for dir in re.split(":", os.environ['PATH']):               # No path specified: try each directory.
+
+    for dir in re.split(":", os.environ['PATH']):               # No path specified: try each directory. Refrence: p4-redirect.
         program = "%s/%s" % (dir, args[0])                      # Path to program is here
         try:
             os.execve(program, args, os.environ)                # Try to run the program.
@@ -133,7 +133,7 @@ def child(args):
     os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
     sys.exit(1)
 
-#Child pipe method. Writes to the pipe.
+#Child pipe method. Writes to the pipe - see README or COLLABORATIONS for attributions.
 def childPipe(args,pread,pwrite): 
     os.close(1)                   # Redirect the output of this method.
     os.dup(pwrite)

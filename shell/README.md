@@ -55,7 +55,7 @@ is clearly documented. These include:
   structure of these demo programs provided by the instructor. Namely, the
   basic structure of the forked 'if-else' branches for parent and child
   processes and some of the structure of the 'execv' block in the
-  child(args) method.
+  child(args) method, where we search for/parse the directory.
 
 * p5-pipe-fork: this was heavily refrenced for the childPipe() method and the
  child() method. Specifically, when a pipe is detected in the child: piping pr

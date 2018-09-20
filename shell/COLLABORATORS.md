@@ -5,7 +5,8 @@ structure of these demo programs provided by the instructor.
 
 * Namely, the basic structure of the forked 'if-else' branches, functions for
 redirection (redirect.py) for parent and child processes and some of the
-structure of the 'execv' block in the child(args) method (p4-exec.py).
+structure of the 'execv' block in the child(args) method (p4-exec.py) for
+parsing/searching for the path.
 
 * p5-pipe-fork.py was heavily refrenced for the childPipe() method and the
  child() method. Specifically, when a pipe is detected in the child: creating
