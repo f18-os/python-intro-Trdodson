@@ -17,7 +17,7 @@ def parent():
         if not prompt:                  # Check if PS1 is set.
             try:
                 args = input("$ ")      # Prompt with a set string.
-            except EOFError:
+            except EOFError:            # Check for EOF.  
                 sys.exit(1)
         else:
             try:
@@ -55,13 +55,15 @@ def parent():
                 continue
             else:
                 childPidCode = os.wait()        # Wait for the child to die.
-        
+                if childPidCode == 0:
+                    os.write(2, ("Program terminated with exit code %d\n" % childPidCode).encode())
+                    
+# Child's functionalities are handled here.        
 def child(args):
 
     pid = os.getpid()
-    # os.write(1, ("Child: my pid is %d\n" % pid).encode())
     
-    if '>' in args:      # Redirect detected. The user wants to redirect the output.
+    if '>' in args:      # Redirect detected. The user wants to redirect the output. See p4-redirect.
         os.close(1)                                             # Close standard output.
         sys.stdout = open(args[args.index('>') + 1], "w")       # Redirect output of program to specified text file.
         fd = sys.stdout.fileno()                                # define file descriptor
@@ -88,10 +90,8 @@ def child(args):
     if '&' in args:       # The user doesn't want the shell to wait until process dies. Just gets rid of '&'.               
         args.remove('&')
 
-
-    if '|' in args:       # User is piping!
-
-        pr,pw = os.pipe() # Pipe: from p5-pipe.
+    if '|' in args:       # User is piping! Not quite functional.
+        pr,pw = os.pipe() # Pipe: lots of help from p5-pipe. See COLLABORATIONS.md for attribution details.
 
         for f in (pr,pw):
             os.set_inheritable(f, True)
@@ -108,14 +108,23 @@ def child(args):
                 os.dup(pr)
                 for fd in (pr,pw):
                     os.close(fd)
-                args.remove(args[args.index('|') - 1])
-                args.remove('|')
-                print(args)
+                    
                 for line in fileinput.input():
-                    print("child-child: %s" % line)
+                    os.write(2,("Pipe Child: %s" % line).encode())
                     sys.exit(1)
+
+                    
+    for char in args[0]:        # Search the command for a path.
+        if '/' in args[0]:      # User specified a path - execute immmeadiately.
+            program = args[0]
+            try:
+                os.execv(program, args)
+            except FileNotFoundError:
+                pass
+            os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
+            sys.exit(1)
         
-    for dir in re.split(":", os.environ['PATH']):               # Try each directory.
+    for dir in re.split(":", os.environ['PATH']):               # No path specified: try each directory.
         program = "%s/%s" % (dir, args[0])                      # Path to program is here
         try:
             os.execve(program, args, os.environ)                # Try to run the program.
@@ -124,7 +133,7 @@ def child(args):
     os.write(2, ("Child %d: Could not exec %s \n" % (pid, program)).encode())
     sys.exit(1)
 
-#Child pipe method.
+#Child pipe method. Writes to the pipe.
 def childPipe(args,pread,pwrite): 
     os.close(1)                   # Redirect the output of this method.
     os.dup(pwrite)

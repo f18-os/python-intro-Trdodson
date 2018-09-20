@@ -38,7 +38,12 @@ It will create and write to the file if it does not already exist - otherwise,
 it will simply overwrite the existing file. It is also possible to redirect
 input using '<' and to append an existing output using '>>'.
 
-To exit the shell, simply type "exit" into the prompt.
+Piping is only partially implemented: if '|' is found in the input, the child
+will fork another child, which will write a greeting message to the pipe. Its
+parent will read it and print it out.
+
+To change the current working directory, use cd (e.g. cd ..). To exit the
+shell, simply type "exit" into the prompt.
 
 ## Refrences
 
@@ -51,5 +56,10 @@ is clearly documented. These include:
   basic structure of the forked 'if-else' branches for parent and child
   processes and some of the structure of the 'execv' block in the
   child(args) method.
+
+* p5-pipe-fork: this was heavily refrenced for the childPipe() method and the
+ child() method. Specifically, when a pipe is detected in the child: piping pr
+ and pw and redirecting to the pipe is understood, but they have not yet been
+ modified to run programs using the pipe's contents.
   
 Further edits as warranted.
