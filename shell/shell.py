@@ -7,23 +7,20 @@
 # detailed instructions and refrences.
 
 import os, sys, time, re, fileinput
-        
+
+prompt = "$ "
 def parent():
     while(True):                        # Keep asking for prompts 'till user types "exit"
 
         pid = os.getpid()
-        prompt = os.environ["PS1"]
-
-        if not prompt:                  # Check if PS1 is set.
-            try:
-                args = input("$ ")      # Prompt with a set string.
-            except EOFError:            # Check for EOF.  
-                sys.exit(1)
-        else:
-            try:
-                args = input(prompt)    # Prompt with the PS1 variable.
-            except EOFError:
-                sys.exit(1)
+        
+        if "PS1" in os.environ:
+            prompt = os.environ["PS1"]
+        
+        try:
+            args = input(prompt)    # Prompt with the PS1 variable.
+        except EOFError:
+            sys.exit(1)
         
         type(args)
         
